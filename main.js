@@ -1,50 +1,44 @@
 import agent from 'superagent';
 import defaults from 'superagent-defaults';
 import Promise from 'bluebird';
+import { queue } from 'd3-queue';
+import $ from 'jquery';
 
 Promise.promisifyAll(agent);
 const request = defaults(agent);
 
-const BASE = 'https://httpbin.org';
-const REQUESTS = 10;
-const DELAY_MIN = 0;
-const DELAY_MAX = 0;
-let startTime = null;
+var url = 'http://localhost:8888/';
 
+const start = new Date();
+console.log('started', start);
 
-function randint(lo, hi) {
-    return lo + Math.round(Math.random() * (hi-lo));
-}
-
-
-function secondsSinceStart() {
-    const now = new Date();
-    return (now - startTime) / 1000;
-}
-
-
-let completed = 0;
-
-
-function makeRequest(args = {}) {
-    const delay = args.delay || 0;
-    return request.get(`${BASE}/delay/${delay}`)
-        .send(args)
-        .endAsync()
-        .then(r => {
-            completed++;
-            console.log(secondsSinceStart().toFixed(3), "ok", r.body.url)
-            if (completed === REQUESTS) {
-                console.log('done');
-            }
-        })
-        .catch(r => console.error("error", r))
-}
-
-startTime = new Date();
-console.log('dispatching requests');
-for (let i = 0; i < REQUESTS; i++) {
-    const delay = randint(DELAY_MIN, DELAY_MAX);
-    const p = makeRequest({ idx: i, delay });
-    console.log(`requested: delay = ${delay}`);
-}
+queue(2)
+  .defer(function(callback) {
+    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+  })
+  .defer(function(callback) {
+    $.get(url, {json: JSON.stringify({value: 3}), delay: 2}, function(data) { callback(null, data); });
+  })
+  .defer(function(callback) {
+    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+  })
+  .defer(function(callback) {
+    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+  })
+  .defer(function(callback) {
+    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+  })
+  .defer(function(callback) {
+    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+  })
+  .await((err, results) => {
+      if (err) throw err;
+      const end = new Date();
+      console.log(`finished after ${((end-start)/1000).toFixed(2)} sec`);
+  })
+  /*
+  .awaitAll((err, results) => {
+      const end = new Date();
+      console.log(`finished after ${((end-start)/1000).toFixed(2)} sec`);
+  });
+  */
