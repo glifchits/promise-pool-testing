@@ -14,22 +14,22 @@ console.log('started', start);
 
 queue(2)
   .defer(function(callback) {
-    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+    return request.get(url).endAsync().then(res => callback(null, res)).catch(callback);
   })
   .defer(function(callback) {
-    $.get(url, {json: JSON.stringify({value: 3}), delay: 2}, function(data) { callback(null, data); });
+    return request.get(url).endAsync().then(res => callback(null, res)).catch(callback);
   })
   .defer(function(callback) {
-    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+    return request.get(url).endAsync().then(res => callback(null, res)).catch(callback);
   })
   .defer(function(callback) {
-    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+    return request.get(url).endAsync().then(res => callback(null, res)).catch(callback);
   })
   .defer(function(callback) {
-    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+    return request.get(url).endAsync().then(res => callback(null, res)).catch(callback);
   })
   .defer(function(callback) {
-    $.get(url, {json: JSON.stringify({value: 1}), delay: 1}, function(data) { callback(null, data); });
+    return request.get(url).endAsync().then(res => callback(null, res)).catch(callback);
   })
   .await((err, results) => {
       if (err) throw err;
